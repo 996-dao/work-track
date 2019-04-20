@@ -43,7 +43,7 @@ contract TimeTrack {
 
     // add an employee given an address and name
     function addEmployee() public returns (bool _success)  {
-        employees[msg.sender] = Employee(msg.sender, true, 1, 1, false);
+        employees[msg.sender] = Employee({employeeAddress: msg.sender, isActive: true, punchDayNum: 1, overtimeCount: 1, punchStatus: false});
         employeeIdCount++;
         employeeAddresses.push(msg.sender);
         return true;

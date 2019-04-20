@@ -387,6 +387,20 @@ def cpc():
 def punchIn():
     return jsonify(callPunchIn())
 
+@app.route("/companyChart", methods=['get'])
+def companyChart():
+    companies = [
+        {
+            "name": "alicaca",
+            "workTime": 144,
+        },
+        {
+            "name": "tencant",
+            "workTime": 90,
+        },
+    ]
+    return render_template("996_company_chart.html", companies=companies)
+
 
 if __name__ == "__main__":
     app.run()

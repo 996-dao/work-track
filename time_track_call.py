@@ -17,13 +17,11 @@ w3 = Web3(Web3.HTTPProvider(url))
 w3.cpc.defaultAccount = w3.cpc.accounts[0]
 
 # change the keypath to your keystore file
-keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee2/keystore/UTC--2019-04-20T04-45-24.347359000Z--8f73f5fd17279250902fcb5da778e9682c9de0f8"
-password = "hqh941218"
+keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee4/keystore/UTC--2019-04-20T15-50-30.278614000Z--40c6421ee9bb430a60432a3126e086045b3f5087"
+password = "123123"
 filepath = "time_track.txt"
-# account_addr = '0xc6aba3e25a1a8e7f0445fca321d1ffc3dcd61e3f'
-account_addr = '0x8f73f5fd17279250902fcb5da778e9682c9de0f8'
-# contract_addr = "0x3Df0aFfeA5Ee45d17e06955d1FD55A335C880828"
-contract_addr = "0xE3212eb1CD24fb168f0D81Bb695a69676f4a36B9"
+account_addr = '0x40c6421ee9bb430a60432a3126e086045b3f5087'
+contract_addr = "0xF84A9498f4aC31272eC002769295bDd19D6fFc7D"
 
 
 def get_contract_interface(filepath, contract_name):
@@ -40,21 +38,12 @@ timeTrack = w3.cpc.contract(
     abi=contract_interface['abi'],
 )
 
-def creat_contract(filepath,contract_name,keypath,password,account_addr):
-    # Solidity source code
-    contract_code_file = open(filepath,"r")
-    contract_source_code = contract_code_file.read()
-    print(contract_source_code)
-    compiled_sol = compile_source(contract_source_code)  # Compiled source code
-    contract_interface = compiled_sol[f'<stdin>:{contract_name}']
-
-
+def creat_contract():
     # Instantiate and deploy contract
-    Greeter = w3.cpc.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
-
+    Contract = w3.cpc.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
     # Submit the transaction that deploys the contract
     from_addr = w3.toChecksumAddress(account_addr)
-    tx_hash = Greeter.constructor().raw_transact({
+    tx_hash = Contract.constructor().raw_transact({
         # Increase or decrease gas according to contract conditions
         'gas': 3000000,
         'from': from_addr,
@@ -69,12 +58,7 @@ def creat_contract(filepath,contract_name,keypath,password,account_addr):
     print(tx_receipt)
     # print(tx_receipt1)
 
-    # Create the contract instance with the newly-deployed address
-    greeter = w3.cpc.contract(
-        address=tx_receipt.contractAddress,
-        abi=contract_interface['abi'],
-    )
-    return greeter,w3,tx_receipt.contractAddress
+    return tx_receipt.contractAddress
 
 def callPunchIn():
     w3 = Web3(Web3.HTTPProvider(url))
@@ -86,40 +70,60 @@ def callPunchIn():
     },keypath,password,42)
     # Wait for transaction to be mined...
     w3.cpc.waitForTransactionReceipt(tx_hash)
-    print(
-        tx_hash
-    )
+    return timeTrack.functions.displayPunchTime().call()
+
+def callPunchOut():
+    w3 = Web3(Web3.HTTPProvider(url))
+    from_addr = w3.toChecksumAddress(account_addr)
+    tx_hash = timeTrack.functions.doPunchOUT().raw_transact({
+        'gas': 300000,
+        'from':from_addr,
+        'value': 0,
+    },keypath,password,42)
+    # Wait for transaction to be mined...
+    w3.cpc.waitForTransactionReceipt(tx_hash)
+    return timeTrack.functions.getEmployees().call()
+
+
+def callAddEmployee():
+    w3 = Web3(Web3.HTTPProvider(url))
+    from_addr = w3.toChecksumAddress(account_addr)
+    tx_hash = timeTrack.functions.addEmployee().raw_transact({
+        'gas': 300000,
+        'from':from_addr,
+        'value': 0,
+    },keypath,password,42)
+    # Wait for transaction to be mined...
+    w3.cpc.waitForTransactionReceipt(tx_hash)
     return timeTrack.functions.getEmployees().call()
 
 def call_contract():
-    # cpc_fusion.cpc.getTransactionReceipt()
     w3 = Web3(Web3.HTTPProvider(url))
     from_addr = w3.toChecksumAddress(account_addr)
-    # add employee
-    # tx_hash = contract.functions.addEmployee().raw_transact({
-    #     'gas': 340000,
-    #     'from':from_addr,
-    #     'value': 0,
-    # },keypath,password,42)
-    
-    # w3.cpc.waitForTransactionReceipt(tx_hash)
-
-    # # punchin
-    # tx_hash = contract.functions.doPunchIN().raw_transact({
-    #     'gas': 340000,
-    #     'from':from_addr,
-    #     'value': 0,
-    # },keypath,password,42)
-
-    # # Wait for transaction to be mined...
-    # w3.cpc.waitForTransactionReceipt(tx_hash)
-    
     print(
         timeTrack.functions.getEmployees().call()
     )
     return timeTrack.functions.getEmployees().call()
 
+def call_displayMe():
+    w3 = Web3(Web3.HTTPProvider(url))
+    from_addr = w3.toChecksumAddress(account_addr)
+    print(
+        timeTrack.functions.displayMyOvertimeCount().call()
+    )
+    print(
+        timeTrack.functions.displayMyPunchDayNum().call()
+    )
+    print(
+        timeTrack.functions.displayMyPunchStatus().call()
+    )
+    return timeTrack.functions.displayMyOvertimeCount().call()
+
 if __name__ == '__main__':
 
-    # creat_contract(filepath,'TimeTrack',keypath,password,account_addr)
-    call_contract()
+    # creat_contract()
+    # callAddEmployee()
+    # call_contract()
+    # callPunchIn()
+    callPunchOut()
+    call_displayMe()

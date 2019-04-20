@@ -1,31 +1,32 @@
 pragma solidity ^0.4.24;
+pragma experimental ABIEncoderV2;
 contract TimeTrack {
-
     // Address to represent owner
     address public employer;
     address[] public employeeAddresses;
     uint public employeeIdCount;
     uint currentBlockTime;
-    uint breakViolationCount;
-
+    uint totalOvertimeCount;
+    uint totalPunchInTime;
+    uint totalPunchOutTime;
 
     // Datastructure to represent each employee
     struct Employee {
-        uint employeeID;
         address employeeAddress;
         bool isActive;
-        Card card;
+        uint punchDayNum;
+        uint overtimeCount;
+        bool punchStatus; //true => IN, false => OUT
     }
 
     struct Card {
-        bool punchAlert; //true => IN, false => OUT
         uint punchIn;
         uint punchOut;
-        uint breakViolationCount;
     }
 
     //Stores employee struct for each possible address
     mapping(address => Employee) public employees;
+    mapping(address => mapping(uint => Card)) public punchHistory;
 
     function TimeTrack() public {
         employer = msg.sender;
@@ -41,18 +42,14 @@ contract TimeTrack {
 
     // add an employee given an address and name
     function addEmployee() public returns (bool _success)  {
-        employees[msg.sender] = Employee(employeeIdCount, msg.sender, true, Card(false, 0, 0, 0));
+        employees[msg.sender] = Employee(msg.sender, true, 0, 0, false);
         employeeIdCount++;
         employeeAddresses.push(msg.sender);
         return true;
     }
 
-    function displayNow() public view returns (uint) {
+    function displayPunchTime() public view returns (uint) {
      return currentBlockTime;
-    }
-
-    function displayViolation() public view returns (uint) {
-      return breakViolationCount;
     }
 
     function breakViolationAlert() public pure returns (string) {
@@ -66,43 +63,59 @@ contract TimeTrack {
         //     (!employees[msg.sender].card.punchAlert)
         //     );
         currentBlockTime = now;
-        employees[msg.sender].card.punchIn = currentBlockTime;
-        employees[msg.sender].card.punchAlert = true;
+        employees[msg.sender].punchDayNum = employees[msg.sender].punchDayNum + 1;
+        uint punchDayNum = employees[msg.sender].punchDayNum;
+        punchHistory[msg.sender][punchDayNum].punchIn = currentBlockTime;
+        employees[msg.sender].punchStatus = true;
         return true;
     }
 
     function doPunchOUT() public returns (bool _success) {
-               require(
-            (employer != msg.sender) &&
-            (employees[msg.sender].isActive) &&
-            (employees[msg.sender].card.punchAlert)
-            );
+        // require(
+        //     (employer != msg.sender) &&
+        //     (employees[msg.sender].isActive) &&
+        //     (employees[msg.sender].card.punchAlert)
+        //     );
         currentBlockTime = now;
-        employees[msg.sender].card.punchOut = currentBlockTime;
-        employees[msg.sender].card.punchAlert = false;
-        calculateBreakViolation();
+        uint punchDayNum = employees[msg.sender].punchDayNum;
+        punchHistory[msg.sender][punchDayNum].punchOut = currentBlockTime;
+        employees[msg.sender].punchStatus = false;
+        caluculateOvertime();
         return true;
     }
 
-    function calculateBreakViolation() private {
-        uint punchOut = employees[msg.sender].card.punchOut;
-        uint punchIn = employees[msg.sender].card.punchIn;
+    function caluculateOvertime() private {
+        uint punchDayNum = employees[msg.sender].punchDayNum;
+        uint punchOut = punchHistory[msg.sender][punchDayNum].punchOut;
+        uint punchIn = punchHistory[msg.sender][punchDayNum].punchIn;
         require(punchOut > punchIn);
         uint diff = punchOut - punchIn;
-        if (diff < 1800) {
-            employees[msg.sender].card.breakViolationCount++;
+        // 为了方便测试，将工作超时时间设置为1min
+        if (diff > 60 * 1) {
+            employees[msg.sender].overtimeCount++;
+            totalOvertimeCount++;
         }
-        breakViolationCount = employees[msg.sender].card.breakViolationCount;
     }
 
-    function displayBreakViolation() public view returns(uint) {
-        return employees[msg.sender].card.breakViolationCount;
+    function displayTotalOvertimeCount() public view returns(uint) {
+        return totalOvertimeCount;
     }
 
     function getEmployees() public view returns(address[])  {
         return employeeAddresses;
     }
 
+    function displayMyPunchStatus() public view returns (bool) {
+        return employees[msg.sender].punchStatus;
+    }
+
+    function displayMyPunchDayNum() public view returns (uint) {
+        return employees[msg.sender].punchDayNum;
+    }
+    
+    function displayMyOvertimeCount() public view returns (uint) {
+        return employees[msg.sender].overtimeCount;
+    }
 
 }
 

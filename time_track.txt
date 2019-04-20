@@ -13,6 +13,11 @@ contract TimeTrack {
     address currentMsgSender;
     Employee public currentEmployee;
 
+    // for testing
+    // because we can't make mapping(x => something complicate like struct or mapping work)
+    uint[] public punchIns;
+    uint[] public punchOuts;
+
     // Datastructure to represent each employee
     struct Employee {
         address employeeAddress;
@@ -75,6 +80,7 @@ contract TimeTrack {
         uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum++;
         employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = true;
         punchHistory[msg.sender][punchStartedDayNum].punchIn = currentBlockTime;
+        punchIns.push(currentBlockTime);
 
         return true;
     }
@@ -89,10 +95,11 @@ contract TimeTrack {
         currentMsgSender = msg.sender;
         totalPunchOutCount++;
         uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;
-        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum++
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum++;
         employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = false;
         punchHistory[msg.sender][punchStartedDayNum].punchOut = currentBlockTime;
         punchCards[msg.sender].push(punchHistory[msg.sender][punchStartedDayNum]);
+        punchOuts.push(currentBlockTime);
         caluculateOvertime();
 
         return true;
@@ -111,21 +118,21 @@ contract TimeTrack {
         }
     }
 
-    function displayMyPunchIns() public view returns(Card[]) {
-        uint[] punchIns;
-        uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
-        for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
-            punchIns.push(punchHistory[msg.sender][i].punchIn)
-        }
+    function displayMyPunchIns() public view returns(uint[]) {
+        // uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
+        // uint[] memory punchIns = new uint[](punchFinishedDayNum);
+        // for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
+        //     punchIns[i] = punchHistory[msg.sender][i].punchIn;
+        // }
         return punchIns;
     }
 
-    function displayMyPunchOuts() public view returns(Card[]) {
-        uint[] punchOuts;
-        uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
-        for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
-            punchOuts.push(punchHistory[msg.sender][i].punchOut)
-        }
+    function displayMyPunchOuts() public view returns(uint[]) {
+        // uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
+        // uint[] memory punchOuts = new uint[](punchFinishedDayNum);
+        // for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
+        //     punchOuts[i] = punchHistory[msg.sender][i].punchOut;
+        // }
         return punchOuts;
     }
 

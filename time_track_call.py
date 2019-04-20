@@ -17,11 +17,11 @@ w3 = Web3(Web3.HTTPProvider(url))
 w3.cpc.defaultAccount = w3.cpc.accounts[0]
 
 # change the keypath to your keystore file
-keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee14/keystore/UTC--2019-04-20T19-24-12.446831000Z--f27a3f9d513f876c0769744b809f181cd5d1b815"
+keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee16/keystore/UTC--2019-04-20T20-13-09.246795000Z--a14ce304e96fad7b8d498fa9ec79da49616f74c1"
 password = "123123"
 filepath = "time_track.txt"
-account_addr = 'f27a3f9d513f876c0769744b809f181cd5d1b815'
-contract_addr = "0x731cfa428abD523278EED1083a15c970eF1fD46e"
+account_addr = '0xa14ce304e96fad7b8d498fa9ec79da49616f74c1'
+contract_addr = "0x12c73DFc5Cb2B2dbb492EBb19c0171771AB0CECC"
 
 
 def get_contract_interface(filepath, contract_name):
@@ -105,6 +105,18 @@ def call_contract():
     )
     return timeTrack.functions.getEmployees().call()
 
+def call_displayMyHistory():
+    w3 = Web3(Web3.HTTPProvider(url))
+    from_addr = w3.toChecksumAddress(account_addr)
+    print(
+        timeTrack.functions.displayMyPunchIns().call()
+    )
+    print(
+        timeTrack.functions.displayMyPunchOuts().call()
+    )
+
+    return timeTrack.functions.displayMyPunchIns().call(), timeTrack.functions.displayMyPunchOuts().call()
+
 def call_displayMe():
     w3 = Web3(Web3.HTTPProvider(url))
     from_addr = w3.toChecksumAddress(account_addr)
@@ -119,10 +131,6 @@ def call_displayMe():
     )
     print(
         timeTrack.functions.displayMyAddr().call()
-    )
-
-    print(
-        timeTrack.functions.displayMyHistory().call()
     )
 
     return timeTrack.functions.displayMyOvertimeCount().call()
@@ -150,7 +158,8 @@ if __name__ == '__main__':
     # creat_contract()
     # callAddEmployee()
     # call_contract()
-    # callPunchIn()
-    # callPunchOut()
-    # call_display_global()
+    callPunchIn()
+    callPunchOut()
+    call_display_global()
     call_displayMe()
+    call_displayMyHistory()

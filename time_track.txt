@@ -4,12 +4,14 @@ contract TimeTrack {
     // Address to represent owner
     address public employer;
     address[] public employeeAddresses;
+    Employee[] public employeeEntities;
     uint public employeeIdCount;
-    uint currentBlockTime;
-    uint totalOvertimeCount;
-    uint totalPunchInCount;
-    uint totalPunchOutCount;
+    uint public currentBlockTime;
+    uint public totalOvertimeCount;
+    uint public totalPunchInCount;
+    uint public totalPunchOutCount;
     address currentMsgSender;
+    Employee public currentEmployee;
 
     // Datastructure to represent each employee
     struct Employee {
@@ -28,6 +30,7 @@ contract TimeTrack {
     //Stores employee struct for each possible address
     mapping(address => Employee) public employees;
     mapping(address => mapping(uint => Card)) public punchHistory;
+    mapping(address => uint) public addrToEmployeeIdMap;
 
     function TimeTrack() public {
         employer = msg.sender;
@@ -43,7 +46,10 @@ contract TimeTrack {
 
     // add an employee given an address and name
     function addEmployee() public returns (bool _success)  {
-        employees[msg.sender] = Employee({employeeAddress: msg.sender, isActive: true, punchDayNum: 1, overtimeCount: 1, punchStatus: false});
+        currentEmployee = Employee({employeeAddress: msg.sender, isActive: true, punchDayNum: 1, overtimeCount: 1, punchStatus: false});
+        addrToEmployeeIdMap[msg.sender] = employeeIdCount;
+        employees[msg.sender] = currentEmployee;
+        employeeEntities.push(currentEmployee);
         employeeIdCount++;
         employeeAddresses.push(msg.sender);
         return true;
@@ -70,6 +76,9 @@ contract TimeTrack {
         uint punchDayNum = employees[msg.sender].punchDayNum;
         punchHistory[msg.sender][punchDayNum].punchIn = currentBlockTime;
         employees[msg.sender].punchStatus = true;
+
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchDayNum++;
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = true;
         return true;
     }
 
@@ -86,6 +95,8 @@ contract TimeTrack {
         punchHistory[msg.sender][punchDayNum].punchOut = currentBlockTime;
         employees[msg.sender].punchStatus = false;
         caluculateOvertime();
+
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = false;
         return true;
     }
 
@@ -100,6 +111,18 @@ contract TimeTrack {
             employees[msg.sender].overtimeCount++;
             totalOvertimeCount++;
         }
+    }
+
+    function getCurrentEmployeeEntityAddress() public view returns(address) {
+        return employeeEntities[addrToEmployeeIdMap[msg.sender]].employeeAddress;
+    }
+
+    function displayCurrentEmployeeAddress() public view returns(address) {
+        return currentEmployee.employeeAddress;
+    }
+
+    function getFirstEmployeeEntityAddress() public view returns(address) {
+        return employeeEntities[0].employeeAddress;
     }
 
     function displayTotalOvertimeCount() public view returns(uint) {
@@ -134,5 +157,8 @@ contract TimeTrack {
         return employees[msg.sender].overtimeCount;
     }
 
+    function displayMyAddr() public view returns (address) {
+        return employees[msg.sender].employeeAddress;
+    }
 }
 

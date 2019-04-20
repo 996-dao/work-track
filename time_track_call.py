@@ -17,11 +17,11 @@ w3 = Web3(Web3.HTTPProvider(url))
 w3.cpc.defaultAccount = w3.cpc.accounts[0]
 
 # change the keypath to your keystore file
-keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee11/keystore/UTC--2019-04-20T18-41-24.962422000Z--faf1a023d6d9bfd96564c7547420a0b3b8c61076"
+keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee14/keystore/UTC--2019-04-20T19-24-12.446831000Z--f27a3f9d513f876c0769744b809f181cd5d1b815"
 password = "123123"
 filepath = "time_track.txt"
-account_addr = '0xfaf1a023d6d9bfd96564c7547420a0b3b8c61076'
-contract_addr = "0xD5fC25C575eD7c834007FD5B5472C8f6E13bbcEB"
+account_addr = 'f27a3f9d513f876c0769744b809f181cd5d1b815'
+contract_addr = "0x731cfa428abD523278EED1083a15c970eF1fD46e"
 
 
 def get_contract_interface(filepath, contract_name):
@@ -120,6 +120,11 @@ def call_displayMe():
     print(
         timeTrack.functions.displayMyAddr().call()
     )
+
+    print(
+        timeTrack.functions.displayMyHistory().call()
+    )
+
     return timeTrack.functions.displayMyOvertimeCount().call()
 
 def call_display_global():
@@ -138,13 +143,6 @@ def call_display_global():
         timeTrack.functions.displayCurrentMsgSender().call()
     )
 
-    print(
-        timeTrack.functions.displayCurrentEmployeeAddress().call()
-    )
-    print(
-        timeTrack.functions.getFirstEmployeeEntityAddress().call()
-    )
-
     return timeTrack.functions.displayTotalOvertimeCount().call()
 
 if __name__ == '__main__':
@@ -154,5 +152,5 @@ if __name__ == '__main__':
     # call_contract()
     # callPunchIn()
     # callPunchOut()
-    call_display_global()
+    # call_display_global()
     call_displayMe()

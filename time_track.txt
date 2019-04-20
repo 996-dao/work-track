@@ -7,8 +7,9 @@ contract TimeTrack {
     uint public employeeIdCount;
     uint currentBlockTime;
     uint totalOvertimeCount;
-    uint totalPunchInTime;
-    uint totalPunchOutTime;
+    uint totalPunchInCount;
+    uint totalPunchOutCount;
+    address currentMsgSender;
 
     // Datastructure to represent each employee
     struct Employee {
@@ -42,7 +43,7 @@ contract TimeTrack {
 
     // add an employee given an address and name
     function addEmployee() public returns (bool _success)  {
-        employees[msg.sender] = Employee(msg.sender, true, 0, 0, false);
+        employees[msg.sender] = Employee(msg.sender, true, 1, 1, false);
         employeeIdCount++;
         employeeAddresses.push(msg.sender);
         return true;
@@ -63,7 +64,9 @@ contract TimeTrack {
         //     (!employees[msg.sender].card.punchAlert)
         //     );
         currentBlockTime = now;
-        employees[msg.sender].punchDayNum = employees[msg.sender].punchDayNum + 1;
+        currentMsgSender = msg.sender;
+        totalPunchInCount++;
+        employees[msg.sender].punchDayNum++;
         uint punchDayNum = employees[msg.sender].punchDayNum;
         punchHistory[msg.sender][punchDayNum].punchIn = currentBlockTime;
         employees[msg.sender].punchStatus = true;
@@ -77,6 +80,8 @@ contract TimeTrack {
         //     (employees[msg.sender].card.punchAlert)
         //     );
         currentBlockTime = now;
+        currentMsgSender = msg.sender;
+        totalPunchOutCount++;
         uint punchDayNum = employees[msg.sender].punchDayNum;
         punchHistory[msg.sender][punchDayNum].punchOut = currentBlockTime;
         employees[msg.sender].punchStatus = false;
@@ -99,6 +104,18 @@ contract TimeTrack {
 
     function displayTotalOvertimeCount() public view returns(uint) {
         return totalOvertimeCount;
+    }
+
+    function displayCurrentMsgSender() public view returns(address) {
+        return currentMsgSender;
+    }
+
+    function displayTotalPunchInCount() public view returns(uint) {
+        return totalPunchInCount;
+    }
+
+    function displayTotalPunchOutCount() public view returns(uint) {
+        return totalPunchOutCount;
     }
 
     function getEmployees() public view returns(address[])  {

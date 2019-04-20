@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Post
+  SYSTEM 'postprofile.dtd'>
+	<Post>
+		<No>1</No>
+		<PostUser>Silver</PostUser>
+		<Block>Coding Experience</Block>
+		<Title>hello</Title>
+		<Content>hello world</Content>
+		<PostTime>2019-04-20 14:42:17</PostTime>
+		<Clicks>6</Clicks>
+		<ReplyNum>0</ReplyNum>
+		<Replies/>
+	</Post>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Section
+  SYSTEM 'secprofile.dtd'>
+	<Section>
+		<Info>
+			<SecId>2</SecId>
+			<SecName>Question and Answer</SecName>
+			<Master>Silver</Master>
+			<PostNum>0</PostNum>
+			<Description>This section is for question and answer.</Description>
+		</Info>
+		<Posts/>
+	</Section>

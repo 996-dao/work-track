@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE User
+  SYSTEM 'userprofile.dtd'>
+	<User>
+		<UserName>xhj</UserName>
+		<Info>
+			<BasicInfo>
+				<Gender>Male</Gender>
+				<Age>908</Age>
+				<Level>0</Level>
+				<Birthday>1111-02-22</Birthday>
+				<Email>1260297455@qq.com</Email>
+			</BasicInfo>
+			<OtherInfo>
+				<Posts/>
+				<Replies/>
+			</OtherInfo>
+		</Info>
+	</User>

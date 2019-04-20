@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Section
+  SYSTEM 'secprofile.dtd'>
+	<Section>
+		<Info>
+			<SecId>1</SecId>
+			<SecName>Coding Experience</SecName>
+			<Master>Silver</Master>
+			<PostNum>1</PostNum>
+			<Description>This section is for sharing coding experience.</Description>
+		</Info>
+		<Posts>
+			<Post>
+				<No>1</No>
+				<PostUser>Silver</PostUser>
+				<Title>hello</Title>
+				<Content>hello world</Content>
+				<PostTime>2019-04-20 14:42:17</PostTime>
+				<Clicks>6</Clicks>
+				<Replies/>
+			</Post>
+		</Posts>
+	</Section>

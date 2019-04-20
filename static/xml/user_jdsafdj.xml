@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE User
+  SYSTEM 'userprofile.dtd'>
+	<User>
+		<UserName>jdsafdj</UserName>
+		<Info>
+			<BasicInfo>
+				<Gender>Male</Gender>
+				<Age>7</Age>
+				<Level>0</Level>
+				<Birthday>2011-12-12</Birthday>
+				<Email>abcd@sdfa.com</Email>
+			</BasicInfo>
+			<OtherInfo>
+				<Posts/>
+				<Replies/>
+			</OtherInfo>
+		</Info>
+	</User>

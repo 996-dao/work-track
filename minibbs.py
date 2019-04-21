@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import *
 from database import *
 from time_track_call import *
 from cpc_fusion import Web3
@@ -6,6 +7,8 @@ from solc import compile_source
 from cpc_fusion.contract import ConciseContract
 
 app = Flask(__name__)
+CORS(app, supports_credentials=False)
+
 
 @app.route("/")
 def homepage():
@@ -16,19 +19,23 @@ def homepage():
     resp.set_cookie('is_master', '', max_age=0)
     return resp
 
+
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     error = None
     if request.method == 'POST':
-        error, is_admin, is_master, userID = valid_login(request.form['account'], request.form['password'])
+        error, is_admin, is_master, userID = valid_login(
+            request.form['account'], request.form['password'])
         if not error:
             resp = make_response(redirect('/sections'))
             resp.set_cookie('username', request.form['account'], max_age=3600)
             resp.set_cookie('userID', str(userID), max_age=3600)
             resp.set_cookie('is_admin', str(is_admin), max_age=3600)
-            resp.set_cookie('is_master', str(','.join(is_master)), max_age=3600)
+            resp.set_cookie('is_master', str(
+                ','.join(is_master)), max_age=3600)
             return resp
     return render_template("login.html", error=error)
+
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
@@ -44,6 +51,7 @@ def register():
             return resp
     return render_template("register.html", error=error)
 
+
 @app.route("/sections", methods=['POST', 'GET'])
 def show_all_sections():
     if request.method == 'POST':
@@ -52,19 +60,22 @@ def show_all_sections():
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
         sections = get_sections()
         return render_template("allsections.html", username=username, sections=sections, admin=is_admin, master=is_master)
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/section/<int:section_id>", methods=['POST', 'GET'])
 def show_section(section_id):
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
         master = section_id in is_master
         if request.method == 'POST':
             return result_page(request.form["searching"])
@@ -73,6 +84,7 @@ def show_section(section_id):
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
+
 
 @app.route("/add_post", methods=['POST'])
 def add_post():
@@ -87,13 +99,15 @@ def add_post():
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/edit_section/<int:section_id>", methods=['POST', 'GET'])
 def edit_section(section_id):
     error = None
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
         if not is_admin and section_id not in is_master:
             print("Not authorized!")
             return redirect('/')
@@ -101,7 +115,8 @@ def edit_section(section_id):
             sec = {}
             sec['name'] = request.form['section_name']
             sec['description'] = request.form['description']
-            if "master" in request.form: sec['master'] = request.form['master']
+            if "master" in request.form:
+                sec['master'] = request.form['master']
             error = update_section(section_id, sec)
             if error:
                 render_template("editsection.html", username=username, id=section_id, admin=is_admin, sec=sec,
@@ -113,6 +128,7 @@ def edit_section(section_id):
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
+
 
 @app.route("/add_section", methods=['POST', 'GET'])
 def add_section():
@@ -137,6 +153,7 @@ def add_section():
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/delete_section/<int:section_id>", methods=['POST', 'GET'])
 def delete_section(section_id):
     try:
@@ -157,7 +174,7 @@ def show_post(post_id=0):
     try:
         if request.method == 'POST' and "searching" in request.form:
             return result_page(request.form['searching'])
-        if post_id==0:
+        if post_id == 0:
             post_id = request.form['real_id']
         username = request.cookies["username"]
         admin = True if request.cookies["is_admin"] == 'True' else False
@@ -168,6 +185,7 @@ def show_post(post_id=0):
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
+
 
 @app.route("/add_reply", methods=['POST'])
 def add_reply():
@@ -182,7 +200,6 @@ def add_reply():
         return redirect('/')
 
 
-
 @app.route("/add_praise", methods=['POST'])
 def add_praise():
     reply_id = request.form['praising']
@@ -194,6 +211,7 @@ def add_praise():
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/profile", methods=['POST', 'GET'])
 @app.route("/profile/<int:user_id>", methods=['POST', 'GET'])
 def show_profile(user_id=0):
@@ -201,18 +219,21 @@ def show_profile(user_id=0):
         if request.method == 'POST':
             searching = request.form['searching']
             return redirect('/searchresult/%s' % searching)
-        if user_id == 0: user_id = int(request.cookies['userID'])
+        if user_id == 0:
+            user_id = int(request.cookies['userID'])
         username = request.cookies['username']
         target_username = get_usernameFromID(user_id)
         admin = True if request.cookies["is_admin"] == 'True' else False
-        authorized = True if int(request.cookies["userID"]) == user_id else False
+        authorized = True if int(
+            request.cookies["userID"]) == user_id else False
         make_user_xml(user_id)
-        return render_template("profile.html", username=username,target_username=target_username, admin=admin, authorized=authorized)
+        return render_template("profile.html", username=username, target_username=target_username, admin=admin, authorized=authorized)
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
 
-@app.route("/edit_profile", methods=['POST','GET'])
+
+@app.route("/edit_profile", methods=['POST', 'GET'])
 def edit_profile():
     error = None
     try:
@@ -235,51 +256,58 @@ def delete_post(from_cite):
     post_id = request.form['real_id']
     section_id = getSectionFromPost(post_id)
     delete_postOf(post_id)
-    if from_cite == 1: return redirect('/profile')
-    else: return redirect('/section/%s' % section_id)
+    if from_cite == 1:
+        return redirect('/profile')
+    else:
+        return redirect('/section/%s' % section_id)
 
 
 @app.route("/search", methods=['POST', 'GET'])
 def search():
-    error = None;
+    error = None
     if request.method == 'POST':
-            searching = request.form['searching']
-            return redirect('/searchresult/%s' % searching)
+        searching = request.form['searching']
+        return redirect('/searchresult/%s' % searching)
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
         clicks_post = get_top10clicks_post()
         replies_post = get_top10replies_post()
-        return render_template("search.html", username=username, clicks_post=clicks_post, replies_post = replies_post, admin=is_admin, master=is_master, error=error)
+        return render_template("search.html", username=username, clicks_post=clicks_post, replies_post=replies_post, admin=is_admin, master=is_master, error=error)
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/searchresult/")
 @app.route("/searchresult/<string:searching>", methods=['POST', 'GET'])
 def result_page(searching=""):
-    if not searching or request.method=='POST':
+    if not searching or request.method == 'POST':
         searching = request.form['searching']
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
         result = search_in_db(searching)
         return render_template("searchresult.html", username=username, searching=searching, result=result, admin=is_admin, master=is_master)
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/manage_user", methods=['POST', 'GET'])
 @app.route("/manage_user/<int:id>", methods=['POST', 'GET'])
 def manage_user(id=None):
     if id:
         error = delete_user(id)
-    else: error = None
+    else:
+        error = None
     if request.method == 'POST':
-            searching = request.form['searching']
-            return redirect('/searchresult/%s' % searching)
+        searching = request.form['searching']
+        return redirect('/searchresult/%s' % searching)
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
@@ -288,6 +316,7 @@ def manage_user(id=None):
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
+
 
 @app.route("/add_user", methods=['POST', 'GET'])
 def add_user():
@@ -315,18 +344,20 @@ def compare(seca="", secb=""):
     try:
         username = request.cookies["username"]
         is_admin = True if request.cookies["is_admin"] == 'True' else False
-        is_master = list(map(int, request.cookies["is_master"].split(","))) if request.cookies["is_master"] else []
+        is_master = list(map(int, request.cookies["is_master"].split(
+            ","))) if request.cookies["is_master"] else []
 
         seca = request.form['secA']
         secb = request.form['secB']
         users, error = moreposts(seca, secb)
 
-        return render_template("compare.html", username=username, users = users, seca=seca, secb=secb, admin=is_admin, master=is_master, error=error)
+        return render_template("compare.html", username=username, users=users, seca=seca, secb=secb, admin=is_admin, master=is_master, error=error)
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
 
-@app.route("/active_users/<int:sectionid>/<int:posts>", methods=['POST','GET'])
+
+@app.route("/active_users/<int:sectionid>/<int:posts>", methods=['POST', 'GET'])
 def active_users(sectionid, posts=1):
     if request.method == 'POST' and "searching" in request.form:
         searching = request.form['searching']
@@ -334,7 +365,7 @@ def active_users(sectionid, posts=1):
     try:
         username = request.cookies["username"]
         admin = True if request.cookies["is_admin"] == 'True' else False
-        sortedByPosts = True if posts==1 else False
+        sortedByPosts = True if posts == 1 else False
         sectionName, active_users = get_active_users(sectionid, sortedByPosts)
         return render_template("active_users.html", sectionid=sectionid, username=username, admin=admin,
                                sortedByPosts=sortedByPosts, sectionName=sectionName, active_users=active_users)
@@ -342,7 +373,8 @@ def active_users(sectionid, posts=1):
         print(KeyError, " keyerror for username")
         return redirect('/')
 
-@app.route("/hot_post/<int:sectionid>", methods=['POST','GET'])
+
+@app.route("/hot_post/<int:sectionid>", methods=['POST', 'GET'])
 def hot_post(sectionid):
     if request.method == 'POST' and "searching" in request.form:
         searching = request.form['searching']
@@ -356,6 +388,7 @@ def hot_post(sectionid):
     except KeyError:
         print(KeyError, " keyerror for username")
         return redirect('/')
+
 
 @app.route("/clicks_replies/<int:sectionid>/<int:clicks>", methods=['POST', 'GET'])
 def clicks_replies(sectionid, clicks=1):
@@ -372,6 +405,7 @@ def clicks_replies(sectionid, clicks=1):
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/cpc", methods=['get'])
 def cpc():
     employees = call_contract()
@@ -383,13 +417,22 @@ def cpc():
         print(KeyError, " keyerror for username")
         return redirect('/')
 
+
 @app.route("/cpc/punchIn", methods=['post'])
 def punchIn():
-    return jsonify(callPunchIn())
+    result_json = json.dumps(callPunchIn())
+    resp = Response(result_json)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route("/cpc/punchOut", methods=['post'])
 def punchOut():
-    return jsonify(callPunchOut())
+    result_json = json.dumps(callPunchOut())
+    resp = Response(result_json)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route("/companyChart", methods=['get'])
 def companyChart():
@@ -397,10 +440,17 @@ def companyChart():
         {
             "name": "alicaca",
             "workTime": 144,
+            "type": "danger"
+        },
+        {
+            "name": "pingshaoshao",
+            "workTime": 122,
+            "type": "warning"
         },
         {
             "name": "tencant",
-            "workTime": 90,
+            "workTime": 40,
+            "type": "success"
         },
     ]
     return render_template("996_company_chart.html", companies=companies)
@@ -408,12 +458,17 @@ def companyChart():
 
 @app.route("/userWorkTrack", methods=['get'])
 def userWorkTrack():
+    result = call_displayMyHistory()
+    me = call_displayMe()
     worktime = {
-            "name": "Jackie Ma",
-            "punchIns": [1555791404,1555791454,1555812684,1555812954,1555813044,1555813134],
-            "punchOuts":[1555791424,1555791474,1555812714,1555812984,1555813074,1555813154]
+        "name": "Jackie Ma",
+        "punchIns": result["punchIns"][-7:],
+        "punchOuts": result["punchOuts"][-7:],
     }
-    return render_template("user_work_track.html", worktime = worktime)
+    punchStatus = me["punchStatus"]
+    overtimeCount = me["overtimeCount"]
+    return render_template("user_work_track.html", worktime=worktime, punchStatus=punchStatus, overtimeCount=overtimeCount)
+
 
 if __name__ == "__main__":
     app.run()

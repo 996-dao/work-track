@@ -25,12 +25,13 @@ contract_addr = "0x12c73DFc5Cb2B2dbb492EBb19c0171771AB0CECC"
 
 
 def get_contract_interface(filepath, contract_name):
-    contract_code_file = open(filepath,"r")
+    contract_code_file = open(filepath, "r")
     contract_source_code = contract_code_file.read()
     compiled_sol = compile_source(contract_source_code)  # Compiled source code
     contract_interface = compiled_sol[f'<stdin>:{contract_name}']
 
     return contract_interface
+
 
 contract_interface = get_contract_interface(filepath, 'TimeTrack')
 timeTrack = w3.cpc.contract(
@@ -38,9 +39,11 @@ timeTrack = w3.cpc.contract(
     abi=contract_interface['abi'],
 )
 
+
 def creat_contract():
     # Instantiate and deploy contract
-    Contract = w3.cpc.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
+    Contract = w3.cpc.contract(
+        abi=contract_interface['abi'], bytecode=contract_interface['bin'])
     # Submit the transaction that deploys the contract
     from_addr = w3.toChecksumAddress(account_addr)
     tx_hash = Contract.constructor().raw_transact({
@@ -60,26 +63,29 @@ def creat_contract():
 
     return tx_receipt.contractAddress
 
+
 def callPunchIn():
     w3 = Web3(Web3.HTTPProvider(url))
     from_addr = w3.toChecksumAddress(account_addr)
     tx_hash = timeTrack.functions.doPunchIN().raw_transact({
         'gas': 300000,
-        'from':from_addr,
+        'from': from_addr,
         'value': 0,
-    },keypath,password,42)
+    }, keypath, password, 42)
     # Wait for transaction to be mined...
     w3.cpc.waitForTransactionReceipt(tx_hash)
+    print("call punch in")
     return timeTrack.functions.displayPunchTime().call()
+
 
 def callPunchOut():
     w3 = Web3(Web3.HTTPProvider(url))
     from_addr = w3.toChecksumAddress(account_addr)
     tx_hash = timeTrack.functions.doPunchOUT().raw_transact({
         'gas': 300000,
-        'from':from_addr,
+        'from': from_addr,
         'value': 0,
-    },keypath,password,42)
+    }, keypath, password, 42)
     # Wait for transaction to be mined...
     w3.cpc.waitForTransactionReceipt(tx_hash)
     return call_displayMyHistory()
@@ -90,12 +96,13 @@ def callAddEmployee():
     from_addr = w3.toChecksumAddress(account_addr)
     tx_hash = timeTrack.functions.addEmployee().raw_transact({
         'gas': 300000,
-        'from':from_addr,
+        'from': from_addr,
         'value': 0,
-    },keypath,password,42)
+    }, keypath, password, 42)
     # Wait for transaction to be mined...
     w3.cpc.waitForTransactionReceipt(tx_hash)
     return timeTrack.functions.getEmployees().call()
+
 
 def call_contract():
     w3 = Web3(Web3.HTTPProvider(url))
@@ -104,6 +111,7 @@ def call_contract():
         timeTrack.functions.getEmployees().call()
     )
     return timeTrack.functions.getEmployees().call()
+
 
 def call_displayMyHistory():
     w3 = Web3(Web3.HTTPProvider(url))
@@ -115,7 +123,8 @@ def call_displayMyHistory():
         timeTrack.functions.displayMyPunchOuts().call()
     )
 
-    return { "punchIns": timeTrack.functions.displayMyPunchIns().call(), "punchOuts": timeTrack.functions.displayMyPunchOuts().call()}
+    return {"punchIns": timeTrack.functions.displayMyPunchIns().call(), "punchOuts": timeTrack.functions.displayMyPunchOuts().call()}
+
 
 def call_displayMe():
     w3 = Web3(Web3.HTTPProvider(url))
@@ -133,7 +142,8 @@ def call_displayMe():
         timeTrack.functions.displayMyAddr().call()
     )
 
-    return timeTrack.functions.displayMyOvertimeCount().call()
+    return {"overtimeCount": timeTrack.functions.displayMyOvertimeCount().call(), "punchStatus": timeTrack.functions.displayMyPunchStatus().call()}
+
 
 def call_display_global():
     w3 = Web3(Web3.HTTPProvider(url))
@@ -152,6 +162,7 @@ def call_display_global():
     )
 
     return timeTrack.functions.displayTotalOvertimeCount().call()
+
 
 if __name__ == '__main__':
 

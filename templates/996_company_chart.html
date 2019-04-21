@@ -1,46 +1,30 @@
 <!DOCTYPE html>
 <!-- saved from url=(0042)https://v3.bootcss.com/examples/jumbotron/ -->
-<html lang="zh-CN">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta
-      name="description"
-      content="The most active posts/users in certain section in 996.DAO."
-    />
-    <meta name="author" content="Silver" />
-    <link
-      rel="icon"
-      href="{{ url_for('static', filename='images/favicon.ico') }}"
-    />
+    <meta name="description" content="The user-management in 996.DAO.">
+    <meta name="author" content="Silver">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 
-    <title>996 Company Chart</title>
+  
+    <title>996.DAO Company Chart</title>
+
 
     <!-- Bootstrap core CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" >
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/ie10-viewport-bug-workaround.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ie10-viewport-bug-workaround.css') }}" >
 
     <!-- Custom styles for this template -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/jumbotron.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jumbotron.css') }}">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9
-      ]><script src="../../assets/js/ie8-responsive-file-warning.js"></script
-    ><![endif]-->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -50,18 +34,86 @@
   </head>
 
   <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{{ url_for('show_all_sections') }}">996.DAO</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <div class="navbar-left">
+            <a class="navbar-brand" href="{{ url_for('show_profile') }}"><p> User: {{ username }} </p></a>
+              <div class="navbar-brand">All-Users</div>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right" method="post" action="/search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Anything interesting?" name="searching" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Search</button>
+              <a href="{{ url_for('search') }}" class="btn btn-success">Advanced Search</a>
+              {% if admin %}
+              <a href="{{ url_for('manage_user') }}" class="btn btn-warning">Manage Users</a>
+              {% endif %}
+            </form>
+          </div><!--/.navbar-collapse -->
+        </div>
+      </div>
+    </nav>
+
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container" style="margin-top:1vw">
-      {% for company in companies %}
+        {% if error != None %}
+        <p><font color="red">{{ error }}</font></p>
+        {% endif %}
+    <div class="jumbotron">
 
-      <div style="color: red;">{{ company['name'] }}</div>
+      <div class="container" >
+          <div class="row">
+                <div class="alert alert-primary" role="alert">
+                <div class="row">
+                      <div class="col-md-6">
+                        <span>company name</span>
+                      </div>
+                      <div class="col-md-6">
+                        <span>average time</span>
+                      </div>
+                  </div>
+                </div>
+              
+          </div>
+          <hr/>
+          {% for company in companies %}
+          <div class="row">
+                  <div class="alert alert-{{company['type']}}" role="alert">
+                    <div class="row">
+                      <div class="col-md-6">
+                        {{ company['name'] }} 
+                      </div>
+                      <div class="col-md-6">
+                        {{ company['workTime'] }}
+                      </div>
+                    </div>
+                  </div>
+          </div>
 
-      {% endfor %}
-      <hr />
+    {% endfor %}
+      </div>
+
+    </div>
+        <br/>
+
+    <hr>
       <footer>
         <p>Copyright © Database Course Team; Credit to: Silver.</p>
-      </footer>
-      <!-- /container -->
+      </footer> <!-- /container -->
     </div>
-  </body>
-</html>
+
+
+</body></html>

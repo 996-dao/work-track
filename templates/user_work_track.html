@@ -1,210 +1,270 @@
-
 <!DOCTYPE html>
 <!-- saved from url=(0042)https://v3.bootcss.com/examples/jumbotron/ -->
-<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <meta name="description" content="The homepage of 996.DAO.">
-    <meta name="author" content="Silver">
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <meta name="description" content="The homepage of 996.DAO." />
+    <meta name="author" content="Silver" />
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='images/favicon.ico') }}"
+    />
 
     <title>996.DAO userWorkTrack</title>
 
-<html>
-<head>
-<!-- Bootstrap core CSS -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" >
+    <html>
+      <head>
+        <!-- Bootstrap core CSS -->
+        <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+        />
 
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/ie10-viewport-bug-workaround.css') }}" >
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='css/ie10-viewport-bug-workaround.css') }}"
+        />
 
-<!-- Custom styles for this template -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/jumbotron.css') }}">
+        <!-- Custom styles for this template -->
+        <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='css/jumbotron.css') }}"
+        />
 
-<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+        <!--[if lt IE 9
+          ]><script src="../../assets/js/ie8-responsive-file-warning.js"></script
+        ><![endif]-->
 
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-  <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
+        <meta charset="UTF-8" />
+        <title>996.DAO Highcharts</title>
 
+        <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+      </head>
 
-<meta charset="UTF-8" />
-<title>996.DAO Highcharts</title>
-
-<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-</head>
-
-<body>
-
+      <body>
         <nav class="navbar navbar-inverse navbar-fixed-top">
-                <div class="container">
-                  <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="{{ url_for('homepage') }}">996.DAO</a>
-                  </div>
-                  <div id="navbar" class="navbar-collapse collapse">
-                    <form class="navbar-form navbar-right">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Anything interesting?" name="searching" required>
-                          </div>
-                        <button type="submit" class="btn btn-primary">Search</button>
-                        <a href="{{ url_for('search') }}" class="btn btn-success">Advanced Search</a>
-                        {% if admin %}
-                        <a href="{{ url_for('manage_user') }}" class="btn btn-warning">Manage Users</a>
-                        {% endif %}
-                    </form>
-                  </div><!--/.navbar-collapse -->
+          <div class="container">
+            <div class="navbar-header">
+              <button
+                type="button"
+                class="navbar-toggle collapsed"
+                data-toggle="collapse"
+                data-target="#navbar"
+                aria-expanded="false"
+                aria-controls="navbar"
+              >
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('homepage') }}"
+                >996.DAO</a
+              >
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <form class="navbar-form navbar-right">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Anything interesting?"
+                    name="searching"
+                    required
+                  />
                 </div>
-              </nav>
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a href="{{ url_for('search') }}" class="btn btn-success"
+                  >Advanced Search</a
+                >
+                {% if admin %}
+                <a href="{{ url_for('manage_user') }}" class="btn btn-warning"
+                  >Manage Users</a
+                >
+                {% endif %} {% if punchStatus %}
+                <button id="punchOutBtn" class="btn btn-info">
+                  PunchOut
+                </button>
+                {% else %}
+                <button id="punchInBtn" class="btn btn-info">
+                  PunchIn
+                </button>
+                {% endif %}
+              </form>
+            </div>
+            <!--/.navbar-collapse -->
+          </div>
+        </nav>
 
+        <div
+          id="container1"
+          style="width: 550px; height: 400px; margin: 0 auto"
+        ></div>
 
+        <script language="JavaScript">
+          var worktimeName = '{{ worktime["name"] }}';
+          var punchIns = '{{worktime["punchIns"]}}';
+          var punchOuts = '{{worktime["punchOuts"]}}';
+          punchIns = JSON.parse(punchIns);
+          punchOuts = JSON.parse(punchOuts);
+          var worktimeArray = [];
+          for (let i = 0; i < punchIns.length; i++) {
+            worktimeArray.push((punchOuts[i] - punchIns[i]) / 3600);
+          }
 
+          $("#punchOutBtn").click(() => {
+            $.ajax({
+              type: "POST",
+              url: "http://localhost:5000/cpc/punchOut",
+              success: res => {
+                console.log(res);
+              }
+            });
+          });
 
+          $("#punchInBtn").click(() => {
+            $.ajax({
+              type: "POST",
+              url: "http://localhost:5000/cpc/punchIn",
+              success: res => {
+                console.log(res);
+              }
+            });
+          });
 
-<div id="container1" style="width: 550px; height: 400px; margin: 0 auto"></div>
+          $(document).ready(function() {
+            var title = {
+              text: "过去七天工作时长"
+            };
+            var subtitle = {
+              text: "数据来源于过去七天用户在996.DAO的打卡记录"
+            };
+            var xAxis = {
+              categories: ["1", "2", "3", "4", "5", "6", "7"]
+            };
+            var yAxis = {
+              title: {
+                text: "日工作时长/H"
+              }
+            };
+            var plotOptions = {
+              line: {
+                dataLabels: {
+                  enabled: true
+                },
+                enableMouseTracking: false
+              }
+            };
+            var series = [
+              {
+                name: worktimeName,
+                data: worktimeArray
+              }
+            ];
 
-<script language="JavaScript">
-var worktimeName = '{{ worktime["name"] }}';
-var punchIns = '{{worktime["punchIns"]}}';
-var punchOuts = '{{worktime["punchOuts"]}}';
-punchIns = JSON.parse(punchIns);
-punchOuts = JSON.parse(punchOuts);
-var worktimeArray = [];
-for (let i = 0; i < punchIns.length; i++) {
-  worktimeArray.push((punchOuts[i] - punchIns[i]) / 3600);
-}
+            var json = {};
 
-$(document).ready(function() {   
-   var title = {
-      text: '过去七天工作时长'   
-   };
-   var subtitle = {
-      text: '数据来源于过去七天用户在996.DAO的打卡记录'
-   };
-   var xAxis = {
-      categories: ['1','2','3','4','5','6','7']
-   };
-   var yAxis = {
-      title: {
-         text: '日工作时长/H'
-      }
-   };
-   var plotOptions = {
-      line: {
-         dataLabels: {
-            enabled: true
-         },   
-         enableMouseTracking: false
-      }
-   };
-   var series= [{
-         name: worktimeName,
-         data: worktimeArray,
-      }
-   ];
-   
-   var json = {};
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.series = series;
+            json.plotOptions = plotOptions;
+            $("#container1").highcharts(json);
+          });
+        </script>
 
-   json.title = title;
-   json.subtitle = subtitle;
-   json.xAxis = xAxis;
-   json.yAxis = yAxis;  
-   json.series = series;
-   json.plotOptions = plotOptions;
-   $('#container1').highcharts(json);
-  
-});
-</script>
+        <div
+          id="container2"
+          style="width: 550px; height: 400px; margin: 0 auto"
+        ></div>
 
+        <script language="JavaScript">
+          var worktimeName = '{{ worktime["name"] }}';
+          var punchIns = '{{worktime["punchIns"]}}';
+          var punchOuts = '{{worktime["punchOuts"]}}';
+          punchIns = JSON.parse(punchIns);
+          punchOuts = JSON.parse(punchOuts);
+          var worktimeArray = [];
+          var sum = 0.0;
+          for (let i = 0; i < punchIns.length; i++) {
+            worktimeArray.push((punchOuts[i] - punchIns[i]) / 3600);
+            sum = sum + (punchOuts[i] - punchIns[i]) / 3600;
+          }
+          var average = sum / punchIns.length;
 
+          $(document).ready(function() {
+            var chart = {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+            };
+            var title = {
+              text: "日均工作时长占总时间比例"
+            };
+            var tooltip = {
+              pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+            };
+            var plotOptions = {
+              pie: {
+                allowPointSelect: true,
+                cursor: "pointer",
+                dataLabels: {
+                  enabled: true,
+                  format: "<b>{point.name}%</b>: {point.percentage:.1f} %",
+                  style: {
+                    color:
+                      (Highcharts.theme &&
+                        Highcharts.theme.contrastTextColor) ||
+                      "black"
+                  }
+                }
+              }
+            };
+            var series = [
+              {
+                type: "pie",
+                name: "time management",
+                data: [
+                  {
+                    name: "WORK",
+                    y: (average / 24) * 100,
+                    sliced: true,
+                    selected: true
+                  },
+                  ["LIFE", 100 - (average / 24) * 100]
+                ]
+              }
+            ];
 
-<div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div> 
+            var json = {};
+            json.chart = chart;
+            json.title = title;
+            json.tooltip = tooltip;
+            json.series = series;
+            json.plotOptions = plotOptions;
+            $("#container2").highcharts(json);
+          });
+        </script>
 
-<script language="JavaScript">
-var worktimeName = '{{ worktime["name"] }}';
-var punchIns = '{{worktime["punchIns"]}}';
-var punchOuts = '{{worktime["punchOuts"]}}';
-punchIns = JSON.parse(punchIns);
-punchOuts = JSON.parse(punchOuts);
-var worktimeArray = [];
-var sum = 0.0;
-for (let i = 0; i < punchIns.length; i++) {
-  worktimeArray.push((punchOuts[i] - punchIns[i]) / 3600);
-  sum = sum + (punchOuts[i] - punchIns[i]) / 3600;
-}
-var average = sum / punchIns.length;
-
-$(document).ready(function() {  
-   var chart = {
-       plotBackgroundColor: null,
-       plotBorderWidth: null,
-       plotShadow: false
-   };
-   var title = {
-      text: '日均工作时长占总时间比例'   
-   };      
-   var tooltip = {
-      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-   };
-   var plotOptions = {
-      pie: {
-         allowPointSelect: true,
-         cursor: 'pointer',
-         dataLabels: {
-            enabled: true,
-            format: '<b>{point.name}%</b>: {point.percentage:.1f} %',
-            style: {
-               color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-            }
-         }
-      }
-   };
-   var series= [{
-      type: 'pie',
-      name: 'time management',
-      data: [
-         {
-            name: 'WORK',
-            y: average / 24 * 100,
-            sliced: true,
-            selected: true
-         },
-         ['LIFE',   100 - average / 24 * 100]
-      ]
-   }];     
-      
-   var json = {};   
-   json.chart = chart; 
-   json.title = title;     
-   json.tooltip = tooltip;  
-   json.series = series;
-   json.plotOptions = plotOptions;
-   $('#container2').highcharts(json);  
-});
-</script>
-
-
-
-
-
-
-<hr />
-<footer>
-  <p>Copyright © Database Course Team; Credit to: Silver.</p>
-</footer>
-
-</body>
+        <hr />
+        <footer>
+          <p>Copyright © Database Course Team; Credit to: Silver.</p>
+        </footer>
+      </body>
+    </html>
+  </head>
 </html>
-

@@ -19,15 +19,17 @@
 由于开发总时间较短，故界面较为简洁，但已初步具备所需功能。
 * 首页（未登陆）
 
-* 个人主页
-
-
+* 登录页面
+![sign_in](https://github.com/996-dao/work-track/blob/master/static/images/sign%20in.png)
+* 管理员界面
+![administration](https://raw.githubusercontent.com/996-dao/work-track/master/static/images/administer.png)
+* 工作时间追踪
+![worktrack](https://raw.githubusercontent.com/996-dao/work-track/master/static/images/userWorkTrack.png)
 * 版块主页
-
-
+![section](https://github.com/996-dao/work-track/blob/master/static/images/section.png)
 * 公司排行
 
-* 工作时间追踪
+
 
 
 

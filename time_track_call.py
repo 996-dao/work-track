@@ -82,7 +82,7 @@ def callPunchOut():
     },keypath,password,42)
     # Wait for transaction to be mined...
     w3.cpc.waitForTransactionReceipt(tx_hash)
-    return timeTrack.functions.getEmployees().call()
+    return call_displayMyHistory()
 
 
 def callAddEmployee():
@@ -115,7 +115,7 @@ def call_displayMyHistory():
         timeTrack.functions.displayMyPunchOuts().call()
     )
 
-    return timeTrack.functions.displayMyPunchIns().call(), timeTrack.functions.displayMyPunchOuts().call()
+    return { "punchIns": timeTrack.functions.displayMyPunchIns().call(), "punchOuts": timeTrack.functions.displayMyPunchOuts().call()}
 
 def call_displayMe():
     w3 = Web3(Web3.HTTPProvider(url))

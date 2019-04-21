@@ -96,10 +96,12 @@
                 >
                 {% endif %} {% if punchStatus %}
                 <button id="punchOutBtn" class="btn btn-info">
+                  <span id="punchOutBtnSpinner" class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true"></span>
                   PunchOut
                 </button>
                 {% else %}
                 <button id="punchInBtn" class="btn btn-info">
+                  <span id="punchInBtnSpinner" class="spinner-border spinner-border-sm" style="display: none;" role="status" aria-hidden="true"></span>
                   PunchIn
                 </button>
                 {% endif %}
@@ -126,21 +128,25 @@
           }
 
           $("#punchOutBtn").click(() => {
+             $("#punchOutBtnSpinner").css("display","inline");
             $.ajax({
               type: "POST",
               url: "http://localhost:5000/cpc/punchOut",
               success: res => {
                 console.log(res);
+                location.reload();
               }
             });
           });
 
           $("#punchInBtn").click(() => {
+            $("#punchInBtnSpinner").css("display","inline");
             $.ajax({
               type: "POST",
               url: "http://localhost:5000/cpc/punchIn",
               success: res => {
                 console.log(res);
+                location.reload();
               }
             });
           });

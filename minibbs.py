@@ -402,6 +402,15 @@ def companyChart():
     return render_template("996_company_chart.html", companies=companies)
 
 
+@app.route("/userWorkTrack", methods=['get'])
+def userWorkTrack():
+    worktime = {
+            "name": "Jackie Ma",
+            "punchIns": [1555791404,1555791454,1555812684,1555812954,1555813044,1555813134],
+            "punchOuts":[1555791424,1555791474,1555812714,1555812984,1555813074,1555813154]
+    }
+    return render_template("user_work_track.html", worktime = worktime)
+
 if __name__ == "__main__":
     app.run()
     db.close()

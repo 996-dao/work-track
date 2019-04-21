@@ -18,6 +18,8 @@ contract TimeTrack {
     uint[] public punchIns;
     uint[] public punchOuts;
 
+    mapping(string => uint) companyOvertimeCnt;
+
     // Datastructure to represent each employee
     struct Employee {
         address employeeAddress;
@@ -104,6 +106,19 @@ contract TimeTrack {
 
         return true;
     }
+
+    // TODO: move it into doPunchOUT
+    // function calculateCompanyOvertime(string name) returns (uint) {
+    //     uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;
+    //     uint punchOut = punchHistory[msg.sender][punchStartedDayNum].punchOut;
+    //     uint punchIn = punchHistory[msg.sender][punchStartedDayNum].punchIn;
+    //     require(punchOut > punchIn);
+    //     uint diff = punchOut - punchIn;
+    //     // 为了方便测试，将工作超时时间设置为1min
+    //     if (diff > 60 * 1) {
+    //         companyOvertimeCnt[name]++;
+    //     }
+    // }
 
     function caluculateOvertime() private {
         uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;

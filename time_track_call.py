@@ -14,7 +14,7 @@ url = 'http://localhost:8501'
 w3 = Web3(Web3.HTTPProvider(url))
 
 # set pre-funded account as sender
-# w3.cpc.defaultAccount = w3.cpc.accounts[0]
+w3.cpc.defaultAccount = w3.cpc.accounts[0]
 
 # change the keypath to your keystore file
 keypath = "/Users/huangqinghao/Workspace/Hackathons/BitRun9102/workspace/employee16/keystore/UTC--2019-04-20T20-13-09.246795000Z--a14ce304e96fad7b8d498fa9ec79da49616f74c1"

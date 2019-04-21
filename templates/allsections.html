@@ -59,6 +59,7 @@
               <button type="submit" class="btn btn-primary">Search</button>
               <a href="{{ url_for('search') }}" class="btn btn-success">Advanced Search</a>
               <a href="{{ url_for('userWorkTrack') }}" class="btn btn-info">Work Track</a>
+              <a href="{{ url_for('companyChart') }}" class="btn btn-danger">996s</a>
               {% if admin %}
               <a href="{{ url_for('manage_user') }}" class="btn btn-warning">Manage Users</a>
               {% else %}

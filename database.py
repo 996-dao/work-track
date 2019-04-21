@@ -9,7 +9,7 @@ from cpc_fusion import Web3
 from solc import compile_source
 from cpc_fusion.contract import ConciseContract
 
-db = pymysql.Connect(host="localhost", user="root", passwd="", db="minibbs", port=3306, charset='utf8')
+db = pymysql.Connect(host="localhost", user="root", passwd="05565500963", db="minibbs", port=3306, charset='utf8')
 
 cursor = db.cursor()
 

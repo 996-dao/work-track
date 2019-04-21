@@ -198,7 +198,6 @@
         xmlhttp.open("GET", filename + "?t=" + Math.random(), false);
         xmlhttp.send();
         xmlDoc = xmlhttp.responseXML;
-        debugger
         console.log(xmlDoc);
         let section = xmlDoc.getElementsByTagName("Section")[0];
         let info = section.getElementsByTagName("Info")[0];

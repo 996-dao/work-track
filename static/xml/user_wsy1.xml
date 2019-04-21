@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE User
+  SYSTEM 'userprofile.dtd'>
+	<User>
+		<UserName>wsy1</UserName>
+		<Info>
+			<BasicInfo>
+				<Gender>Male</Gender>
+				<Age>0</Age>
+				<Level>0</Level>
+				<Birthday>2019-04-04</Birthday>
+				<Email>wsy@example.com</Email>
+			</BasicInfo>
+			<OtherInfo>
+				<Posts/>
+				<Replies/>
+			</OtherInfo>
+		</Info>
+	</User>

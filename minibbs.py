@@ -387,6 +387,10 @@ def cpc():
 def punchIn():
     return jsonify(callPunchIn())
 
+@app.route("/cpc/punchOut", methods=['post'])
+def punchOut():
+    return jsonify(callPunchOut())
+
 @app.route("/companyChart", methods=['get'])
 def companyChart():
     companies = [

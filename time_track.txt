@@ -4,18 +4,26 @@ contract TimeTrack {
     // Address to represent owner
     address public employer;
     address[] public employeeAddresses;
+    Employee[] public employeeEntities;
     uint public employeeIdCount;
-    uint currentBlockTime;
-    uint totalOvertimeCount;
-    uint totalPunchInCount;
-    uint totalPunchOutCount;
+    uint public currentBlockTime;
+    uint public totalOvertimeCount;
+    uint public totalPunchInCount;
+    uint public totalPunchOutCount;
     address currentMsgSender;
+    Employee public currentEmployee;
+
+    // for testing
+    // because we can't make mapping(x => something complicate like struct or mapping work)
+    uint[] public punchIns;
+    uint[] public punchOuts;
 
     // Datastructure to represent each employee
     struct Employee {
         address employeeAddress;
         bool isActive;
-        uint punchDayNum;
+        uint punchStartedDayNum;
+        uint punchFinishedDayNum;
         uint overtimeCount;
         bool punchStatus; //true => IN, false => OUT
     }
@@ -26,8 +34,9 @@ contract TimeTrack {
     }
 
     //Stores employee struct for each possible address
-    mapping(address => Employee) public employees;
     mapping(address => mapping(uint => Card)) public punchHistory;
+    mapping(address => Card[]) public punchCards;
+    mapping(address => uint) public addrToEmployeeIdMap;
 
     function TimeTrack() public {
         employer = msg.sender;
@@ -35,15 +44,17 @@ contract TimeTrack {
         addEmployee();
     }
 
-    //Make employee inactive in the system
-    function removeAuthorization(address addr) public {
-        require(msg.sender == employer);
-        employees[addr].isActive = false;
-    }
+    // Make employee inactive in the system
+    // function removeAuthorization(address addr) public {
+    //     require(msg.sender == employer);
+    //     employees[addr].isActive = false;
+    // }
 
     // add an employee given an address and name
     function addEmployee() public returns (bool _success)  {
-        employees[msg.sender] = Employee({employeeAddress: msg.sender, isActive: true, punchDayNum: 1, overtimeCount: 1, punchStatus: false});
+        currentEmployee = Employee({employeeAddress: msg.sender, isActive: true, punchStartedDayNum: 1, punchFinishedDayNum: 1, overtimeCount: 1, punchStatus: false});
+        addrToEmployeeIdMap[msg.sender] = employeeIdCount;
+        employeeEntities.push(currentEmployee);
         employeeIdCount++;
         employeeAddresses.push(msg.sender);
         return true;
@@ -66,10 +77,11 @@ contract TimeTrack {
         currentBlockTime = now;
         currentMsgSender = msg.sender;
         totalPunchInCount++;
-        employees[msg.sender].punchDayNum++;
-        uint punchDayNum = employees[msg.sender].punchDayNum;
-        punchHistory[msg.sender][punchDayNum].punchIn = currentBlockTime;
-        employees[msg.sender].punchStatus = true;
+        uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum++;
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = true;
+        punchHistory[msg.sender][punchStartedDayNum].punchIn = currentBlockTime;
+        punchIns.push(currentBlockTime);
+
         return true;
     }
 
@@ -82,24 +94,46 @@ contract TimeTrack {
         currentBlockTime = now;
         currentMsgSender = msg.sender;
         totalPunchOutCount++;
-        uint punchDayNum = employees[msg.sender].punchDayNum;
-        punchHistory[msg.sender][punchDayNum].punchOut = currentBlockTime;
-        employees[msg.sender].punchStatus = false;
+        uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum++;
+        employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus = false;
+        punchHistory[msg.sender][punchStartedDayNum].punchOut = currentBlockTime;
+        punchCards[msg.sender].push(punchHistory[msg.sender][punchStartedDayNum]);
+        punchOuts.push(currentBlockTime);
         caluculateOvertime();
+
         return true;
     }
 
     function caluculateOvertime() private {
-        uint punchDayNum = employees[msg.sender].punchDayNum;
-        uint punchOut = punchHistory[msg.sender][punchDayNum].punchOut;
-        uint punchIn = punchHistory[msg.sender][punchDayNum].punchIn;
+        uint punchStartedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;
+        uint punchOut = punchHistory[msg.sender][punchStartedDayNum].punchOut;
+        uint punchIn = punchHistory[msg.sender][punchStartedDayNum].punchIn;
         require(punchOut > punchIn);
         uint diff = punchOut - punchIn;
         // 为了方便测试，将工作超时时间设置为1min
         if (diff > 60 * 1) {
-            employees[msg.sender].overtimeCount++;
+            employeeEntities[addrToEmployeeIdMap[currentMsgSender]].overtimeCount++;
             totalOvertimeCount++;
         }
+    }
+
+    function displayMyPunchIns() public view returns(uint[]) {
+        // uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
+        // uint[] memory punchIns = new uint[](punchFinishedDayNum);
+        // for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
+        //     punchIns[i] = punchHistory[msg.sender][i].punchIn;
+        // }
+        return punchIns;
+    }
+
+    function displayMyPunchOuts() public view returns(uint[]) {
+        // uint punchFinishedDayNum = employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchFinishedDayNum;
+        // uint[] memory punchOuts = new uint[](punchFinishedDayNum);
+        // for (uint i = 0; i < punchFinishedDayNum - 1; i++) {
+        //     punchOuts[i] = punchHistory[msg.sender][i].punchOut;
+        // }
+        return punchOuts;
     }
 
     function displayTotalOvertimeCount() public view returns(uint) {
@@ -123,16 +157,19 @@ contract TimeTrack {
     }
 
     function displayMyPunchStatus() public view returns (bool) {
-        return employees[msg.sender].punchStatus;
+        return employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStatus;
     }
 
     function displayMyPunchDayNum() public view returns (uint) {
-        return employees[msg.sender].punchDayNum;
+        return employeeEntities[addrToEmployeeIdMap[currentMsgSender]].punchStartedDayNum;
     }
     
     function displayMyOvertimeCount() public view returns (uint) {
-        return employees[msg.sender].overtimeCount;
+        return employeeEntities[addrToEmployeeIdMap[currentMsgSender]].overtimeCount;
     }
 
+    function displayMyAddr() public view returns (address) {
+        return employeeEntities[addrToEmployeeIdMap[currentMsgSender]].employeeAddress;
+    }
 }
 

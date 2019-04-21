@@ -18,7 +18,7 @@
 ### 界面
 由于开发总时间较短，故界面较为简洁，但已初步具备所需功能。
 * 首页（未登陆）
-![homepage]()
+![homepage](https://github.com/996-dao/work-track/blob/master/static/images/homepage.png)
 * 登录页面
 ![sign_in](https://github.com/996-dao/work-track/blob/master/static/images/sign%20in.png)
 * 管理员界面
